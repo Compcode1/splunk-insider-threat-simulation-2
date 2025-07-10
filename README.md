@@ -1,58 +1,58 @@
-# Splunk Insider Threat Simulation 2
+🔐 Splunk Insider Threat Simulation 2
+Simulated Attacker Activity | Battlefield-Aligned Detection Engineering
 
-This project simulates insider threat activity on a Windows host to generate realistic telemetry for detection and triage using Splunk. The simulation is structured around attacker behavior typically seen in internal compromise scenarios and supports structured investigation through SIEM workflows.
+This project simulates insider threat behavior from a compromised Windows user account, generating real Security log telemetry to assess detection coverage using Splunk. Each attacker step reflects a common enterprise tactic — from failed logons and obfuscated PowerShell to scheduled task persistence, lateral movement, and privilege inspection.
 
-## 📁 Project Structure
+🎯 Project Objective
+To replicate post-compromise attacker behavior from a local user account, evaluate host telemetry and SIEM alert coverage, and identify logging gaps and misconfigurations impacting detection.
 
-- **Notebook**: `insider-threat-simulation-2.ipynb`
-- **Format**: Jupyter Notebook with bullet-pointed detection summaries and Splunk queries
-- **Tools Used**: Splunk (local install), Windows Event Viewer, PowerShell, Wireshark, Nmap
+🧪 Simulated Attacker Behaviors
+Failed Logons: Three failed attempts followed by successful login (brute-force simulation).
 
-## 🎯 Objective
+Obfuscated PowerShell Execution: Launched notepad.exe using variable indirection with iex.
 
-To simulate a staged attack by a local user on a Windows machine and use Splunk to detect each phase using real telemetry. The project helps analysts develop investigative fluency by:
-- Generating controlled attacker behavior
-- Collecting relevant Windows Security events
-- Performing detection and triage in Splunk
-- Documenting detection logic and limitations
+Scheduled Task Persistence: Created Updater2 to execute mspaint.exe at user logon.
 
-## 🧪 Simulated Attacker Actions
+Lateral Movement Attempt: Issued mstsc and net use commands toward internal IP (RDP + SMB).
 
-1. **Multiple failed logon attempts**
-2. **Obfuscated PowerShell execution of Notepad**
-3. **Scheduled task persistence via `Updater2`**
-4. **RDP and SMB lateral movement attempt**
-5. **Nmap scan of local host**
-6. **Privilege enumeration via `whoami /priv` and `icacls`**
+Nmap Reconnaissance: Scanned external and localhost targets for open ports and services.
 
-## 🔍 Detection Approach
+Privilege Enumeration: Ran whoami /priv and icacls to inspect local privileges and access rights.
 
-- Each action is correlated with specific Event IDs (e.g., 4625, 4688, 4698)
-- Network behavior analyzed using Wireshark for lateral movement and scanning patterns
-- Splunk used to query and validate each detection step
-- Detection failures are documented for transparency and configuration learning
+🛡️ Detection Results (Splunk)
+✅ Detected: Logon failures (4625), task creation (4698), lateral movement (partial), attribution to user Steve.
 
-## ⚠️ Known Limitations
+⚠️ Partially Detected: PowerShell use (4688 missing command-line), no content from -EncodedCommand.
 
-- **Process creation (4688)** was not ingested due to Splunk permissions/configuration issues
-- Project highlights the importance of correct Windows audit settings and Splunk indexing
+❌ Not Detected: Nmap execution, privilege probe commands, multiple 4688 process creation gaps.
 
-## ✅ Outcomes
+🧩 Lessons Learned
+4688 process telemetry was missing due to misconfigured audit policy and Splunk privilege level.
 
-- Clear identification of logon failures and lateral movement attempts
-- Scheduled task creation and privilege probing successfully detected
-- Event parsing, detection queries, and log gaps explicitly documented
+Splunk was running under LocalSystem without access to Security logs, limiting visibility.
 
-## 🧠 Skills Demonstrated
+Mid-session policy changes failed to capture key attacker actions — audit configs must be active before simulations begin.
 
-- Host-based detection methodology
-- Splunk SIEM query construction
-- Network forensic analysis
-- Adversary simulation and structured investigation
-- Windows auditing configuration troubleshooting
+✔️ Scheduled tasks and logon events were captured as expected.
 
----
+🔍 Battlefield Framework Mapping
+This simulation tests the following host layers from the Cybersecurity Battlefield model:
 
-### 📌 Author: [Compcode1](https://github.com/Compcode1)
+Layer 1: Process Execution
 
-This simulation is part of a broader portfolio of SOC analyst training and incident response documentation. Questions, issues, or collaboration ideas are welcome via GitHub.
+Layer 2: Startup & Persistence
+
+Layer 4: Credentials & Secrets
+
+Layer 5: Event Monitoring
+
+Layer 6: Network Communication
+
+Key telemetry blind spots were observed at Layer 1 and Layer 5 due to misconfigured Splunk ingestion. The project reinforces how audit policy gaps directly impact incident response effectiveness.
+
+📁 Tools Used
+Splunk (local instance), Windows Event Viewer, PowerShell, Nmap, Wireshark
+
+Detection queries written in Splunk SPL with event-level validation and gap documentation
+
+
